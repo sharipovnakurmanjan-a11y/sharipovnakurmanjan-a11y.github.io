@@ -1,0 +1,2557 @@
+<!DOCTYPE html>
+<html lang="ky">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Электрондук Китеп — HTML, CSS, JavaScript</title>
+
+<style>
+/* ══════════════════════════════════════════
+   RESET & BASE
+══════════════════════════════════════════ */
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{font-size:16px;scroll-behavior:smooth;}
+body{
+  background: #1a1009;
+  color: #2c1a0a;
+  font-family: Georgia, serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ══════════════════════════════════════════
+   COVER SCREEN
+══════════════════════════════════════════ */
+#cover-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at 30% 40%, #2d1b00 0%, #0f0800 60%, #050300 100%);
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+}
+#cover-screen.hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+/* Ambient particles */
+.particles {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.particle {
+  position: absolute;
+  width: 2px; height: 2px;
+  background: #d4a044;
+  border-radius: 50%;
+  animation: float-up linear infinite;
+  opacity: 0;
+}
+@keyframes float-up {
+  0%   { transform: translateY(100vh) scale(0); opacity: 0; }
+  10%  { opacity: 0.6; }
+  90%  { opacity: 0.3; }
+  100% { transform: translateY(-20px) scale(1.5); opacity: 0; }
+}
+
+/* THE BOOK on cover */
+.book-cover-wrap {
+  perspective: 1200px;
+  position: relative;
+  z-index: 2;
+}
+
+.book-3d {
+  width: 340px;
+  height: 460px;
+  position: relative;
+  transform-style: preserve-3d;
+  transform: rotateY(-28deg) rotateX(6deg);
+  transition: transform 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  filter: drop-shadow(-40px 40px 60px rgba(0,0,0,0.8));
+  cursor: pointer;
+}
+
+.book-3d:hover {
+  transform: rotateY(-15deg) rotateX(3deg) scale(1.03);
+}
+
+/* Front cover */
+.book-front {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #8B4513 0%, #5C2E00 30%, #3D1C00 70%, #2A1200 100%);
+  border-radius: 3px 12px 12px 3px;
+  overflow: hidden;
+  backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32px 28px 28px;
+}
+
+/* Cover leather texture */
+.book-front::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.04) 2px, rgba(0,0,0,0.04) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 3px, rgba(0,0,0,0.03) 3px, rgba(0,0,0,0.03) 6px);
+  pointer-events: none;
+}
+
+/* Gold border */
+.cover-border {
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(212,160,68,0.3);
+  border-radius: 2px 10px 10px 2px;
+  pointer-events: none;
+}
+.cover-border::before {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  border: 1px solid rgba(212,160,68,0.15);
+  border-radius: 1px 8px 8px 1px;
+}
+
+/* Cover ornament */
+.cover-ornament-top {
+  width: 100%;
+  text-align: center;
+  font-size: 22px;
+  color: #d4a044;
+  opacity: 0.7;
+  letter-spacing: 8px;
+  position: relative;
+  z-index: 1;
+}
+
+.cover-uni {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.cover-uni-name {
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #d4a044;
+  opacity: 0.85;
+  letter-spacing: 1.5px;
+  line-height: 1.6;
+  text-transform: uppercase;
+}
+
+.cover-divider {
+  width: 60px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a044, transparent);
+  margin: 10px auto;
+}
+
+.cover-main {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.cover-label {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: #d4a044;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+
+.cover-title {
+  font-family: Georgia, serif;
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #f5deb3;
+  text-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  letter-spacing: -0.5px;
+}
+
+.cover-title span { color: #d4a044; font-style: italic; }
+
+.cover-subtitle {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #c8a870;
+  opacity: 0.9;
+  letter-spacing: 0.5px;
+}
+
+.cover-langs {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.cover-lang {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border: 1px solid rgba(212,160,68,0.4);
+  border-radius: 3px;
+  color: #d4a044;
+  letter-spacing: 1px;
+}
+
+.cover-footer {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.cover-diploma {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 12px;
+  color: #d4a044;
+  opacity: 0.8;
+  letter-spacing: 0.5px;
+}
+
+.cover-year {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: #a07840;
+  margin-top: 4px;
+  letter-spacing: 3px;
+}
+
+/* Book spine */
+.book-spine {
+  position: absolute;
+  left: -28px;
+  top: 0; bottom: 0;
+  width: 28px;
+  background: linear-gradient(180deg, #3D1C00, #2A1200, #1a0d00);
+  transform: rotateY(-90deg) translateZ(0px) translateX(-14px);
+  transform-origin: right center;
+  border-radius: 4px 0 0 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.spine-text {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-family: Georgia, serif;
+  font-size: 11px;
+  color: #d4a044;
+  opacity: 0.7;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* Book back */
+.book-back {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #2A1200, #1a0d00);
+  border-radius: 3px 12px 12px 3px;
+  transform: rotateY(180deg);
+  backface-visibility: hidden;
+}
+
+/* Book pages (right edge) */
+.book-pages {
+  position: absolute;
+  right: -6px;
+  top: 4px; bottom: 4px;
+  width: 6px;
+  background: repeating-linear-gradient(
+    180deg,
+    #f5ede0 0px, #f5ede0 1px,
+    #e8d8c0 1px, #e8d8c0 2px
+  );
+  border-radius: 0 2px 2px 0;
+}
+
+/* Open button */
+.open-btn {
+  position: absolute;
+  bottom: -80px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #d4a044, #a07030);
+  color: #2c1a0a;
+  border: none;
+  padding: 14px 40px;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  border-radius: 4px;
+  cursor: pointer;
+  white-space: nowrap;
+  box-shadow: 0 4px 20px rgba(212,160,68,0.4), 0 2px 4px rgba(0,0,0,0.3);
+  transition: all 0.3s ease;
+  animation: pulse-gold 2s ease-in-out infinite;
+}
+
+.open-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 8px 32px rgba(212,160,68,0.5), 0 2px 4px rgba(0,0,0,0.3);
+}
+
+@keyframes pulse-gold {
+  0%,100% { box-shadow: 0 4px 20px rgba(212,160,68,0.4), 0 2px 4px rgba(0,0,0,0.3); }
+  50% { box-shadow: 0 4px 32px rgba(212,160,68,0.7), 0 2px 4px rgba(0,0,0,0.3); }
+}
+
+/* ══════════════════════════════════════════
+   BOOK OPENING ANIMATION
+══════════════════════════════════════════ */
+.book-opening-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #1a1009;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.book-opening-overlay.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: all;
+}
+
+.opening-book {
+  perspective: 2000px;
+  width: 340px;
+  height: 460px;
+}
+
+.opening-book-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+}
+
+.opening-cover-anim {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(160deg, #8B4513 0%, #5C2E00 30%, #3D1C00 70%, #2A1200 100%);
+  border-radius: 3px 12px 12px 3px;
+  transform-origin: left center;
+  backface-visibility: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.opening-cover-title {
+  font-family: Georgia, serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: #f5deb3;
+  text-align: center;
+  padding: 20px;
+}
+
+/* ══════════════════════════════════════════
+   MAIN BOOK APP
+══════════════════════════════════════════ */
+#book-app {
+  display: none;
+  min-height: 100vh;
+  background: #f5ede0;
+}
+
+#book-app.visible { display: block; }
+
+/* ── Paper texture background ── */
+#book-app::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── SIDEBAR (Table of Contents) ── */
+.toc-sidebar {
+  position: fixed;
+  left: 0; top: 0; bottom: 0;
+  width: 280px;
+  background: linear-gradient(180deg, #3D1C00 0%, #2A1200 100%);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  box-shadow: 4px 0 24px rgba(0,0,0,0.4);
+}
+
+.toc-sidebar::-webkit-scrollbar { width: 4px; }
+.toc-sidebar::-webkit-scrollbar-thumb { background: rgba(212,160,68,0.3); border-radius: 2px; }
+
+.toc-header {
+  padding: 28px 24px 20px;
+  border-bottom: 1px solid rgba(212,160,68,0.2);
+  text-align: center;
+}
+
+.toc-crest {
+  font-size: 28px;
+  margin-bottom: 8px;
+  color: #d4a044;
+}
+
+.toc-uni-title {
+  font-family: Georgia, serif;
+  font-size: 10px;
+  color: #d4a044;
+  opacity: 0.75;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.toc-book-title {
+  font-family: Georgia, serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #f5deb3;
+  line-height: 1.2;
+}
+
+.toc-book-title em {
+  font-style: italic;
+  color: #d4a044;
+}
+
+.toc-divider {
+  width: 50px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #d4a044, transparent);
+  margin: 12px auto 0;
+}
+
+/* TOC Navigation */
+.toc-nav { padding: 16px 0; flex: 1; }
+
+.toc-chapter-head {
+  padding: 12px 20px 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.toc-chapter-head.html { color: #e8824a; }
+.toc-chapter-head.css  { color: #9b72e8; }
+.toc-chapter-head.js   { color: #f0c040; }
+
+.toc-chapter-head::after {
+  content: '';
+  flex: 1; height: 1px;
+  background: currentColor;
+  opacity: 0.25;
+}
+
+.toc-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 20px;
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: rgba(245,222,179,0.6);
+  transition: all 0.2s;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  position: relative;
+}
+
+.toc-item:hover {
+  color: #f5deb3;
+  background: rgba(212,160,68,0.08);
+}
+
+.toc-item.active {
+  color: #f5deb3;
+  background: rgba(212,160,68,0.12);
+}
+
+.toc-item.active.html { border-left-color: #e8824a; }
+.toc-item.active.css  { border-left-color: #9b72e8; }
+.toc-item.active.js   { border-left-color: #f0c040; }
+
+.toc-num {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(212,160,68,0.4);
+  min-width: 20px;
+}
+
+.toc-footer {
+  padding: 16px 20px;
+  border-top: 1px solid rgba(212,160,68,0.15);
+  text-align: center;
+}
+
+.progress-wrap {
+  margin-bottom: 8px;
+}
+
+.progress-label {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(212,160,68,0.5);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.prog-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 5px;
+}
+
+.prog-name {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(212,160,68,0.5);
+  min-width: 22px;
+}
+
+.prog-bar {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.prog-fill { height: 100%; border-radius: 2px; transition: width 0.4s ease; }
+.prog-fill.html { background: #e8824a; }
+.prog-fill.css  { background: #9b72e8; }
+.prog-fill.js   { background: #f0c040; }
+
+.prog-pct {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  color: rgba(212,160,68,0.5);
+  min-width: 24px;
+  text-align: right;
+}
+
+/* ── MAIN CONTENT AREA ── */
+.book-main {
+  margin-left: 280px;
+  min-height: 100vh;
+  position: relative;
+  z-index: 1;
+}
+
+/* ── PAGE CONTENT ── */
+.page {
+  display: none;
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 60px 64px 80px;
+  animation: page-turn 0.4s ease;
+  position: relative;
+}
+
+.page.active { display: block; }
+
+@keyframes page-turn {
+  from { opacity: 0; transform: translateX(20px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+/* Page number decoration */
+.page::before {
+  content: attr(data-page);
+  position: absolute;
+  bottom: 40px;
+  right: 64px;
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #a07840;
+  opacity: 0.6;
+}
+
+/* ── HOME PAGE ── */
+.home-title-page {
+  text-align: center;
+  padding: 80px 64px;
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 780px;
+  margin: 0 auto;
+  animation: page-turn 0.4s ease;
+}
+
+.home-emblem {
+  font-size: 56px;
+  margin-bottom: 24px;
+  line-height: 1;
+}
+
+.home-uni {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #5c3d1e;
+  letter-spacing: 1px;
+  line-height: 1.8;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  opacity: 0.8;
+}
+
+.home-inst {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  color: #7a5230;
+  margin-bottom: 32px;
+  opacity: 0.8;
+}
+
+.home-rule {
+  width: 100px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #a07840, transparent);
+  margin: 0 auto 32px;
+}
+
+.home-book-title {
+  font-family: Georgia, serif;
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1.05;
+  color: #2c1a0a;
+  margin-bottom: 8px;
+  letter-spacing: -1px;
+}
+
+.home-book-title .hl { color: #a07030; font-style: italic; }
+
+.home-subject {
+  font-family: Georgia, serif;
+  font-size: 20px;
+  font-style: italic;
+  color: #5c3d1e;
+  margin-bottom: 32px;
+  opacity: 0.9;
+}
+
+.home-langs-badge {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 40px;
+}
+
+.lang-chip {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  font-weight: 700;
+  padding: 6px 16px;
+  border: 1px solid;
+  border-radius: 3px;
+  letter-spacing: 1px;
+}
+
+.lang-chip.html { color: #c05020; border-color: #c05020; background: rgba(192,80,32,0.07); }
+.lang-chip.css  { color: #6b3aa8; border-color: #6b3aa8; background: rgba(107,58,168,0.07); }
+.lang-chip.js   { color: #8a6800; border-color: #8a6800; background: rgba(138,104,0,0.07); }
+
+.home-meta-box {
+  border: 1px solid rgba(160,120,64,0.3);
+  border-radius: 4px;
+  padding: 20px 32px;
+  background: rgba(212,160,68,0.05);
+  margin-bottom: 32px;
+  text-align: left;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px 24px;
+}
+
+.home-meta-row {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  color: #5c3d1e;
+  display: flex;
+  gap: 8px;
+}
+
+.home-meta-row span:first-child {
+  color: #a07840;
+  font-style: italic;
+  min-width: 80px;
+}
+
+.home-diploma {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 16px;
+  color: #a07030;
+  margin-bottom: 8px;
+}
+
+.home-year {
+  font-family: 'Courier New', monospace;
+  font-size: 11px;
+  letter-spacing: 4px;
+  color: #a07840;
+  opacity: 0.6;
+}
+
+.open-book-btn {
+  margin-top: 32px;
+  background: linear-gradient(135deg, #8B4513, #5C2E00);
+  color: #f5deb3;
+  border: 1px solid rgba(212,160,68,0.4);
+  padding: 14px 44px;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+}
+
+.open-book-btn:hover {
+  background: linear-gradient(135deg, #a05525, #7C3E00);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+}
+
+/* ── CHAPTER PAGES ── */
+.chapter-header {
+  border-bottom: 2px solid;
+  padding-bottom: 24px;
+  margin-bottom: 40px;
+  position: relative;
+}
+
+.chapter-header.html { border-color: rgba(192,80,32,0.3); }
+.chapter-header.css  { border-color: rgba(107,58,168,0.3); }
+.chapter-header.js   { border-color: rgba(138,104,0,0.3); }
+
+.chapter-num {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.chapter-num.html { color: #c05020; }
+.chapter-num.css  { color: #6b3aa8; }
+.chapter-num.js   { color: #8a6800; }
+
+.chapter-title {
+  font-family: Georgia, serif;
+  font-size: 38px;
+  font-weight: 900;
+  line-height: 1.1;
+  color: #2c1a0a;
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.chapter-intro {
+  font-family: Georgia, serif;
+  font-size: 17px;
+  font-style: italic;
+  color: #5c3d1e;
+  line-height: 1.6;
+  opacity: 0.9;
+}
+
+/* ── LESSON BLOCKS ── */
+.lesson {
+  margin-bottom: 44px;
+}
+
+.lesson h3 {
+  font-family: Georgia, serif;
+  font-size: 22px;
+  font-weight: 700;
+  color: #2c1a0a;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.lesson h3 .marker {
+  width: 4px;
+  height: 22px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.marker.html { background: #c05020; }
+.marker.css  { background: #6b3aa8; }
+.marker.js   { background: #8a6800; }
+
+.lesson p {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: #4a2e10;
+  margin-bottom: 14px;
+}
+
+.lesson ul, .lesson ol {
+  padding-left: 20px;
+  color: #4a2e10;
+  font-family: Georgia, serif;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.lesson li { margin-bottom: 4px; }
+
+/* ── CODE BLOCK (book style) ── */
+.code-block {
+  background: #1e1208;
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 18px 0;
+  border: 1px solid rgba(212,160,68,0.15);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.15), inset 0 1px 0 rgba(212,160,68,0.1);
+}
+
+.code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: rgba(212,160,68,0.06);
+  border-bottom: 1px solid rgba(212,160,68,0.12);
+}
+
+.code-lang-tag {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.code-lang-tag.html { color: #e8824a; }
+.code-lang-tag.css  { color: #9b72e8; }
+.code-lang-tag.js   { color: #f0c040; }
+
+.code-dots { display: flex; gap: 5px; }
+.code-dot  { width: 9px; height: 9px; border-radius: 50%; }
+.code-dot:nth-child(1) { background: #ff5f57; }
+.code-dot:nth-child(2) { background: #ffbd2e; }
+.code-dot:nth-child(3) { background: #28ca41; }
+
+.copy-btn {
+  font-family: 'Courier New', monospace;
+  font-size: 9px;
+  letter-spacing: 1px;
+  color: rgba(212,160,68,0.5);
+  background: none;
+  border: 1px solid rgba(212,160,68,0.2);
+  padding: 3px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.copy-btn:hover { color: #d4a044; border-color: rgba(212,160,68,0.5); }
+.copy-btn.copied { color: #4caf50; border-color: #4caf50; }
+
+.code-body {
+  padding: 18px 20px;
+  overflow-x: auto;
+}
+
+.code-body pre {
+  font-family: 'Courier New', monospace;
+  font-size: 12.5px;
+  line-height: 1.85;
+  color: #c8b89a;
+  white-space: pre;
+}
+
+/* Syntax */
+.kw  { color: #d4a0e8; }
+.tg  { color: #e8824a; }
+.at  { color: #82c8ff; }
+.st  { color: #a8d878; }
+.cm  { color: #5a4a3a; font-style: italic; }
+.fn  { color: #7ab8f8; }
+.nm  { color: #f0b878; }
+.pr  { color: #78d8f8; }
+.vl  { color: #f0c040; }
+.op  { color: #78d8f8; }
+
+/* ── CALLOUT / NOTE ── */
+.note {
+  border-left: 3px solid;
+  padding: 14px 18px;
+  margin: 16px 0;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  line-height: 1.6;
+  font-style: italic;
+  border-radius: 0 4px 4px 0;
+}
+
+.note.tip  { border-color: #8a6800; background: rgba(138,104,0,0.07); color: #5c4400; }
+.note.info { border-color: #2a7a8a; background: rgba(42,122,138,0.07); color: #1a4a58; }
+.note.warn { border-color: #c05020; background: rgba(192,80,32,0.07); color: #7a3010; }
+
+.note strong { font-style: normal; display: block; margin-bottom: 4px; }
+
+/* ── TABLE ── */
+.book-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+  font-family: Georgia, serif;
+  font-size: 15px;
+}
+
+.book-table th {
+  text-align: left;
+  padding: 10px 14px;
+  background: rgba(160,120,64,0.1);
+  border: 1px solid rgba(160,120,64,0.25);
+  font-weight: 600;
+  color: #3c2010;
+  font-size: 13px;
+  letter-spacing: 0.5px;
+}
+
+.book-table td {
+  padding: 9px 14px;
+  border: 1px solid rgba(160,120,64,0.2);
+  color: #4a2e10;
+  line-height: 1.5;
+  vertical-align: top;
+}
+
+.book-table tr:hover td { background: rgba(212,160,68,0.04); }
+
+.t-code {
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #c05020;
+}
+.t-code.css { color: #6b3aa8; }
+.t-code.js  { color: #8a6800; }
+
+/* ── QUIZ ── */
+.quiz-box {
+  background: rgba(212,160,68,0.06);
+  border: 1px solid rgba(212,160,68,0.25);
+  border-radius: 6px;
+  padding: 24px;
+  margin: 28px 0;
+}
+
+.quiz-title {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: #2c1a0a;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quiz-q {
+  font-family: Georgia, serif;
+  font-size: 16px;
+  color: #3c2010;
+  margin-bottom: 14px;
+  line-height: 1.5;
+  font-style: italic;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.quiz-opt {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(160,120,64,0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: Georgia, serif;
+  font-size: 15px;
+  color: #4a2e10;
+  transition: all 0.2s;
+  user-select: none;
+}
+
+.quiz-opt:hover { background: rgba(212,160,68,0.1); border-color: rgba(160,120,64,0.4); }
+.quiz-opt.correct { background: rgba(40,160,80,0.1); border-color: #28a050; color: #186030; }
+.quiz-opt.wrong   { background: rgba(192,80,32,0.08); border-color: #c05020; color: #7a3010; }
+
+.quiz-key {
+  width: 22px; height: 22px;
+  background: rgba(160,120,64,0.15);
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  font-weight: 700;
+  color: #a07040;
+  flex-shrink: 0;
+}
+
+.quiz-result {
+  font-family: Georgia, serif;
+  font-size: 14px;
+  padding: 10px 14px;
+  border-radius: 4px;
+  display: none;
+  font-style: italic;
+}
+
+.quiz-result.show { display: block; }
+.quiz-result.ok  { background: rgba(40,160,80,0.1); color: #186030; border: 1px solid #28a050; }
+.quiz-result.err { background: rgba(192,80,32,0.08); color: #7a3010; border: 1px solid #c05020; }
+
+/* ── INFO CARDS ── */
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px;
+  margin: 16px 0;
+}
+
+.info-card {
+  background: rgba(255,255,255,0.5);
+  border: 1px solid rgba(160,120,64,0.2);
+  border-radius: 6px;
+  padding: 18px;
+  transition: all 0.2s;
+}
+
+.info-card:hover {
+  background: rgba(255,255,255,0.7);
+  border-color: rgba(160,120,64,0.4);
+  transform: translateY(-1px);
+}
+
+.info-card .ic-icon { font-size: 22px; margin-bottom: 10px; }
+
+.info-card h4 {
+  font-family: Georgia, serif;
+  font-size: 15px;
+  font-weight: 700;
+  color: #2c1a0a;
+  margin-bottom: 6px;
+}
+
+.info-card p {
+  font-size: 13px !important;
+  margin-bottom: 0 !important;
+  opacity: 0.85;
+}
+
+/* ── CHAPTER DIVIDER ── */
+.ch-divider {
+  text-align: center;
+  margin: 32px 0;
+  color: #a07840;
+  opacity: 0.4;
+  font-size: 18px;
+  letter-spacing: 8px;
+}
+
+/* ── NAVIGATION BUTTONS ── */
+.page-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 32px 64px 40px;
+  border-top: 1px solid rgba(160,120,64,0.2);
+  margin-top: 20px;
+}
+
+.nav-btn {
+  font-family: Georgia, serif;
+  font-size: 15px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #5C2E00, #3D1C00);
+  color: #f5deb3;
+  border: 1px solid rgba(212,160,68,0.3);
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.25s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.nav-btn:hover {
+  background: linear-gradient(135deg, #7c3e00, #5C2E00);
+  transform: translateY(-1px);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.page-indicator {
+  font-family: Georgia, serif;
+  font-style: italic;
+  font-size: 14px;
+  color: #a07840;
+}
+
+/* ── PRACTICE RUNNER ── */
+.practice-box {
+  background: #1e1208;
+  border: 1px solid rgba(212,160,68,0.2);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 20px 0;
+}
+
+.practice-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid rgba(212,160,68,0.12);
+  background: rgba(212,160,68,0.06);
+}
+
+.practice-head span {
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  color: rgba(212,160,68,0.6);
+  letter-spacing: 1px;
+}
+
+.run-btn {
+  background: linear-gradient(135deg, #8B4513, #5C2E00);
+  color: #f5deb3;
+  border: 1px solid rgba(212,160,68,0.3);
+  padding: 6px 16px;
+  font-family: 'Courier New', monospace;
+  font-size: 10px;
+  border-radius: 3px;
+  cursor: pointer;
+  letter-spacing: 1px;
+  transition: all 0.2s;
+}
+
+.run-btn:hover { background: linear-gradient(135deg, #a05525, #7C3E00); }
+
+.practice-editor textarea {
+  width: 100%;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 14px 18px;
+  color: #c8b89a;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  line-height: 1.8;
+  resize: vertical;
+  min-height: 130px;
+}
+
+.practice-output {
+  border-top: 1px solid rgba(212,160,68,0.12);
+  background: white;
+  display: none;
+  min-height: 80px;
+}
+
+.practice-output.show { display: block; }
+
+.practice-output iframe {
+  width: 100%;
+  border: none;
+  min-height: 120px;
+  display: block;
+}
+
+/* ── MOBILE TOGGLE ── */
+.mob-toggle {
+  display: none;
+  position: fixed;
+  top: 14px; left: 14px;
+  z-index: 200;
+  background: #3D1C00;
+  border: 1px solid rgba(212,160,68,0.3);
+  border-radius: 6px;
+  width: 38px; height: 38px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.mob-toggle span {
+  display: block;
+  width: 16px; height: 2px;
+  background: #d4a044;
+  border-radius: 1px;
+}
+
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 90;
+}
+
+.overlay.show { display: block; }
+
+@media (max-width: 860px) {
+  .toc-sidebar { transform: translateX(-100%); transition: transform 0.3s ease; }
+  .toc-sidebar.open { transform: translateX(0); }
+  .book-main { margin-left: 0; }
+  .mob-toggle { display: flex; }
+  .page { padding: 40px 24px 60px; }
+  .page::before { right: 24px; }
+  .home-title-page { padding: 60px 24px; }
+  .home-book-title { font-size: 36px; }
+  .page-nav { padding: 24px; }
+  .info-grid { grid-template-columns: 1fr; }
+  .home-meta-box { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════
+     COVER SCREEN
+════════════════════════════════════════ -->
+<div id="cover-screen">
+  <div class="particles" id="particles"></div>
+
+  <div class="book-cover-wrap">
+    <div class="book-3d" id="book3d">
+      <!-- Pages edge -->
+      <div class="book-pages"></div>
+
+      <!-- Spine -->
+      <div class="book-spine">
+        <span class="spine-text">HTML · CSS · JavaScript</span>
+      </div>
+
+      <!-- Front Cover -->
+      <div class="book-front">
+        <div class="cover-border"></div>
+
+        <div class="cover-ornament-top">✦ ✦ ✦</div>
+
+        <div class="cover-uni">
+          <div class="cover-uni-name">
+            ОШ МАМЛЕКЕТТИК УНИВЕРСИТЕТИ<br>
+            МАТЕМАТИКА, ФИЗИКА, ТЕХНИКА ЖАНА ИНФОРМАЦИЯЛЫК ТЕХНОЛОГИЯЛАР ИНСТИТУТУ<br>
+            КОЛДОНМО МАТЕМАТИКА, ИНФОРМАТИКА ЖАНА ГРАФИКАЛЫК ДИЗАЙН КАФЕДРАСЫ
+          </div>
+          <div class="cover-divider"></div>
+        </div>
+
+        <div class="cover-main">
+          <div class="cover-label">Электрондук Окуулук</div>
+          <div class="cover-title">
+            <span>HTML</span>, CSS<br>жана <span>JavaScript</span>
+          </div>
+          <div class="cover-subtitle">Веб-программалоо курсу</div>
+          <div class="cover-langs">
+            <span class="cover-lang">&lt;/&gt;</span>
+            <span class="cover-lang">{ }</span>
+            <span class="cover-lang">JS</span>
+          </div>
+        </div>
+
+        <div class="cover-footer">
+          <div class="cover-divider"></div>
+          <div class="cover-diploma">Дипломдук иш</div>
+          <div class="cover-year">ОШ · 2026</div>
+        </div>
+      </div>
+
+      <!-- Back -->
+      <div class="book-back"></div>
+    </div>
+
+    <button class="open-btn" id="openBookBtn" onclick="openBook()">
+      📖 &nbsp; Китепти ачуу
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     BOOK APP
+════════════════════════════════════════ -->
+<div id="book-app">
+
+  <!-- Overlay for mobile -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Mobile toggle -->
+  <button class="mob-toggle" id="mobToggle">
+    <span></span><span></span><span></span>
+  </button>
+
+  <!-- SIDEBAR / TABLE OF CONTENTS -->
+  <aside class="toc-sidebar" id="tocSidebar">
+    <div class="toc-header">
+      <div class="toc-crest">📚</div>
+      <div class="toc-uni-title">
+        ОШ МАМЛЕКЕТТИК УНИВЕРСИТЕТИ<br>МАТЕМАТИКА, ФИЗИКА, ТЕХНИКА ЖАНА ИНФОРМАЦИЯЛЫК ТЕХНОЛОГИЯЛАР ИНСТИТУТУ<br>КОЛДОНМО МАТЕМАТИКА, ИНФОРМАТИКА ЖАНА ГРАФИКАЛЫК ДИЗАЙН КАФЕДРАСЫ
+      </div>
+      <div class="toc-book-title">
+        <em>HTML, CSS &amp;</em><br>JavaScript
+      </div>
+      <div class="toc-divider"></div>
+    </div>
+
+    <nav class="toc-nav">
+      <a class="toc-item active" onclick="showPage('home',this)">
+        <span class="toc-num">—</span> Титул баракча
+      </a>
+
+      <div class="toc-chapter-head html">HTML</div>
+      <a class="toc-item html" onclick="showPage('html1',this)">
+        <span class="toc-num">01</span> HTML негиздери
+      </a>
+      <a class="toc-item html" onclick="showPage('html2',this)">
+        <span class="toc-num">02</span> Теглер жана атрибуттар
+      </a>
+      <a class="toc-item html" onclick="showPage('html3',this)">
+        <span class="toc-num">03</span> Формалар жана таблицалар
+      </a>
+      <a class="toc-item html" onclick="showPage('html4',this)">
+        <span class="toc-num">04</span> Семантикалык HTML
+      </a>
+
+      <div class="toc-chapter-head css">CSS</div>
+      <a class="toc-item css" onclick="showPage('css1',this)">
+        <span class="toc-num">05</span> CSS негиздери
+      </a>
+      <a class="toc-item css" onclick="showPage('css2',this)">
+        <span class="toc-num">06</span> Сайлагычтар жана касиеттер
+      </a>
+      <a class="toc-item css" onclick="showPage('css3',this)">
+        <span class="toc-num">07</span> Flexbox жана Grid
+      </a>
+      <a class="toc-item css" onclick="showPage('css4',this)">
+        <span class="toc-num">08</span> Анимациялар & Media Query
+      </a>
+
+      <div class="toc-chapter-head js">JavaScript</div>
+      <a class="toc-item js" onclick="showPage('js1',this)">
+        <span class="toc-num">09</span> JS негиздери
+      </a>
+      <a class="toc-item js" onclick="showPage('js2',this)">
+        <span class="toc-num">10</span> Функциялар жана массивдер
+      </a>
+      <a class="toc-item js" onclick="showPage('js3',this)">
+        <span class="toc-num">11</span> DOM менен иштөө
+      </a>
+      <a class="toc-item js" onclick="showPage('js4',this)">
+        <span class="toc-num">12</span> Окуялар жана API
+      </a>
+    </nav>
+
+    <div class="toc-footer">
+      <div class="progress-wrap">
+        <div class="progress-label">Прогресс</div>
+        <div class="prog-row">
+          <span class="prog-name">HTML</span>
+          <div class="prog-bar"><div class="prog-fill html" id="ph" style="width:0%"></div></div>
+          <span class="prog-pct" id="pph">0%</span>
+        </div>
+        <div class="prog-row">
+          <span class="prog-name">CSS</span>
+          <div class="prog-bar"><div class="prog-fill css" id="pc" style="width:0%"></div></div>
+          <span class="prog-pct" id="ppc">0%</span>
+        </div>
+        <div class="prog-row">
+          <span class="prog-name">JS</span>
+          <div class="prog-bar"><div class="prog-fill js" id="pj" style="width:0%"></div></div>
+          <span class="prog-pct" id="ppj">0%</span>
+        </div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="book-main">
+
+    <!-- ── HOME / TITLE PAGE ── -->
+    <div id="home" class="home-title-page">
+      <div class="home-emblem">🎓</div>
+      <div class="home-uni">ОШ МАМЛЕКЕТТИК УНИВЕРСИТЕТИ</div>
+      <div class="home-inst">МАТЕМАТИКА, ФИЗИКА, ТЕХНИКА ЖАНА ИНФОРМАЦИЯЛЫК ТЕХНОЛОГИЯЛАР ИНСТИТУТУ<br>КОЛДОНМО МАТЕМАТИКА, ИНФОРМАТИКА ЖАНА ГРАФИКАЛЫК ДИЗАЙН КАФЕДРАСЫ</div>
+      <div class="home-rule"></div>
+
+      <div class="home-book-title">
+        <span class="hl">HTML</span>, CSS<br>жана JavaScript
+      </div>
+      <div class="home-subject">Веб-программалоо боюнча электрондук окуулук</div>
+
+      <div class="home-langs-badge">
+        <span class="lang-chip html">&lt;HTML&gt;</span>
+        <span class="lang-chip css">{ CSS }</span>
+        <span class="lang-chip js">JS ⚡</span>
+      </div>
+
+      <div class="home-meta-box">
+        <div class="home-meta-row"><span>Предмет:</span> Веб-программалоо</div>
+        <div class="home-meta-row"><span>Деңгээл:</span> Баштапкы → Орто</div>
+        <div class="home-meta-row"><span>Тил:</span> Кыргызча</div>
+        <div class="home-meta-row"><span>Сабактар:</span> 12 сабак</div>
+        <div class="home-meta-row"><span>Мазмун:</span> HTML, CSS, JS</div>
+        <div class="home-meta-row"><span>Жыл:</span> 2026</div>
+      </div>
+
+      <div class="home-diploma">— Дипломдук иш —</div>
+      <div class="home-year">ОШ · 2026</div>
+
+      <button class="open-book-btn" onclick="showPage('html1', document.querySelector('.toc-item.html'))">
+        Окууну баштоо →
+      </button>
+    </div>
+
+    <!-- ══════════ HTML 1 ══════════ -->
+    <div id="html1" class="page" data-page="— 3 —">
+      <div class="chapter-header html">
+        <div class="chapter-num html">Биринчи бөлүм · HTML</div>
+        <h1 class="chapter-title">HTML Негиздери</h1>
+        <p class="chapter-intro">HTML (HyperText Markup Language) — веб-баракчаларды түзүүдө колдонулган белгилөө тили. Ал 1991-жылы Тим Бернерс-Ли тарабынан иштелип чыккан.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> HTML деген эмне?</h3>
+        <p>HTML — веб-баракчанын структурасын жана мазмунун аныктаган тил. Ал программалоо тили эмес, <strong>белгилөө тили</strong> (markup language). Браузер HTML кодун окуп, колдонуучуга баракчаны көрсөтөт.</p>
+
+        <div class="info-grid">
+          <div class="info-card">
+            <div class="ic-icon">🏗️</div>
+            <h4>Структура</h4>
+            <p>HTML баракчанын "скелети" — аталыш, абзац, сүрөт, шилтеме.</p>
+          </div>
+          <div class="info-card">
+            <div class="ic-icon">🌐</div>
+            <h4>Браузер</h4>
+            <p>Chrome, Firefox, Safari HTML кодун окуп, сизге баракча катары көрсөтөт.</p>
+          </div>
+          <div class="info-card">
+            <div class="ic-icon">📁</div>
+            <h4>Кеңейтүү</h4>
+            <p>HTML файлдары <code>.html</code> же <code>.htm</code> кеңейтүүсүн колдонот.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> HTML документинин структурасы</h3>
+        <p>Ар бир HTML файлы стандарттык структурага ээ болушу керек:</p>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">&lt;!-- DOCTYPE — HTML5 экенин билдирет --&gt;</span>
+<span class="tg">&lt;!DOCTYPE html&gt;</span>
+<span class="tg">&lt;html</span> <span class="at">lang</span>=<span class="st">"ky"</span><span class="tg">&gt;</span>
+
+  <span class="tg">&lt;head&gt;</span>
+    <span class="cm">&lt;!-- Мета-маалымат (колдонуучу көрбөйт) --&gt;</span>
+    <span class="tg">&lt;meta</span> <span class="at">charset</span>=<span class="st">"UTF-8"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;meta</span> <span class="at">name</span>=<span class="st">"viewport"</span>
+          <span class="at">content</span>=<span class="st">"width=device-width"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;title&gt;</span>Менин баракчам<span class="tg">&lt;/title&gt;</span>
+  <span class="tg">&lt;/head&gt;</span>
+
+  <span class="tg">&lt;body&gt;</span>
+    <span class="cm">&lt;!-- Колдонуучу көрүүчү мазмун --&gt;</span>
+    <span class="tg">&lt;h1&gt;</span>Салам, дүйнө!<span class="tg">&lt;/h1&gt;</span>
+    <span class="tg">&lt;p&gt;</span>Бул менин биринчи баракчам.<span class="tg">&lt;/p&gt;</span>
+  <span class="tg">&lt;/body&gt;</span>
+
+<span class="tg">&lt;/html&gt;</span></pre></div>
+        </div>
+        <div class="note info">
+          <strong>💡 Маанилүү</strong>
+          <code>&lt;head&gt;</code> ичиндегилер браузер өтмөгүндө жана SEO үчүн. <code>&lt;body&gt;</code> ичиндегилерди гана колдонуучу экранда көрөт.
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> Негизги теглер</h3>
+        <table class="book-table">
+          <tr><th>Тег</th><th>Аты</th><th>Колдонулушу</th></tr>
+          <tr><td><span class="t-code">&lt;h1&gt;–&lt;h6&gt;</span></td><td>Баш жазуулар</td><td>Баракча аталыштары, h1 эң чоң</td></tr>
+          <tr><td><span class="t-code">&lt;p&gt;</span></td><td>Параграф</td><td>Текст абзацтары</td></tr>
+          <tr><td><span class="t-code">&lt;a&gt;</span></td><td>Шилтеме</td><td>Башка баракчага шилтеме</td></tr>
+          <tr><td><span class="t-code">&lt;img&gt;</span></td><td>Сүрөт</td><td>Сүрөт кыстаруу</td></tr>
+          <tr><td><span class="t-code">&lt;div&gt;</span></td><td>Бөлүм</td><td>Элементтерди топтоо</td></tr>
+          <tr><td><span class="t-code">&lt;ul&gt;/&lt;ol&gt;</span></td><td>Тизме</td><td>Иреттелбеген/иреттелген тизме</td></tr>
+          <tr><td><span class="t-code">&lt;br&gt;</span></td><td>Сызык</td><td>Жаңы сапка өтүү</td></tr>
+        </table>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Билимди текшерүү</div>
+        <p class="quiz-q">HTML документинде колдонуучуга көрүнүүчү мазмун кайсы тегде жайгашат?</p>
+        <div class="quiz-options" id="q-html1">
+          <div class="quiz-opt" onclick="answer(this,'html1',false)"><span class="quiz-key">A</span> &lt;head&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html1',true)"><span class="quiz-key">B</span> &lt;body&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html1',false)"><span class="quiz-key">C</span> &lt;html&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html1',false)"><span class="quiz-key">D</span> &lt;meta&gt;</div>
+        </div>
+        <div class="quiz-result" id="r-html1"></div>
+      </div>
+
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ HTML 2 ══════════ -->
+    <div id="html2" class="page" data-page="— 7 —">
+      <div class="chapter-header html">
+        <div class="chapter-num html">Экинчи сабак · HTML</div>
+        <h1 class="chapter-title">Теглер жана Атрибуттар</h1>
+        <p class="chapter-intro">Атрибуттар теглерге кошумча маалымат берет. Алар ачылуучу тегде <em>аты="мааниси"</em> форматында жазылат.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> Шилтемелер — &lt;a&gt;</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">&lt;!-- Сырткы шилтеме (жаңы өтмөктө ачылат) --&gt;</span>
+<span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"https://google.com"</span>
+   <span class="at">target</span>=<span class="st">"_blank"</span>
+   <span class="at">rel</span>=<span class="st">"noopener"</span><span class="tg">&gt;</span>
+  Googleго өт
+<span class="tg">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Ошол эле сайтка --&gt;</span>
+<span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"/about.html"</span><span class="tg">&gt;</span>Биз жөнүндө<span class="tg">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Email шилтеме --&gt;</span>
+<span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"mailto:info@oshu.edu.kg"</span><span class="tg">&gt;</span>Email<span class="tg">&lt;/a&gt;</span>
+
+<span class="cm">&lt;!-- Телефон шилтеме --&gt;</span>
+<span class="tg">&lt;a</span> <span class="at">href</span>=<span class="st">"tel:+996700000000"</span><span class="tg">&gt;</span>Чалуу<span class="tg">&lt;/a&gt;</span></pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> Сүрөттөр — &lt;img&gt;</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="tg">&lt;img</span>
+  <span class="at">src</span>=<span class="st">"logo.png"</span>
+  <span class="at">alt</span>=<span class="st">"Логотип"</span>
+  <span class="at">width</span>=<span class="st">"300"</span>
+  <span class="at">height</span>=<span class="st">"200"</span>
+  <span class="at">loading</span>=<span class="st">"lazy"</span>
+<span class="tg">&gt;</span></pre></div>
+        </div>
+        <div class="note warn">
+          <strong>⚠️ Эске алыңыз</strong>
+          <code>alt</code> атрибуту МИЛДЕТТҮҮ! Сүрөт жүктөлбөй калганда жана мүмкүнчүлүгү чектелген колдонуучулар үчүн зарыл.
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> Тизмелер</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">&lt;!-- Иреттелбеген тизме --&gt;</span>
+<span class="tg">&lt;ul&gt;</span>
+  <span class="tg">&lt;li&gt;</span>HTML<span class="tg">&lt;/li&gt;</span>
+  <span class="tg">&lt;li&gt;</span>CSS<span class="tg">&lt;/li&gt;</span>
+  <span class="tg">&lt;li&gt;</span>JavaScript<span class="tg">&lt;/li&gt;</span>
+<span class="tg">&lt;/ul&gt;</span>
+
+<span class="cm">&lt;!-- Иреттелген тизме --&gt;</span>
+<span class="tg">&lt;ol&gt;</span>
+  <span class="tg">&lt;li&gt;</span>Биринчи кадам<span class="tg">&lt;/li&gt;</span>
+  <span class="tg">&lt;li&gt;</span>Экинчи кадам<span class="tg">&lt;/li&gt;</span>
+<span class="tg">&lt;/ol&gt;</span></pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Шилтемени жаңы браузер өтмөгүндө ачуу үчүн кайсы атрибутту колдонобуз?</p>
+        <div class="quiz-options" id="q-html2">
+          <div class="quiz-opt" onclick="answer(this,'html2',false)"><span class="quiz-key">A</span> href="_new"</div>
+          <div class="quiz-opt" onclick="answer(this,'html2',false)"><span class="quiz-key">B</span> rel="blank"</div>
+          <div class="quiz-opt" onclick="answer(this,'html2',true)"><span class="quiz-key">C</span> target="_blank"</div>
+          <div class="quiz-opt" onclick="answer(this,'html2',false)"><span class="quiz-key">D</span> open="tab"</div>
+        </div>
+        <div class="quiz-result" id="r-html2"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ HTML 3 ══════════ -->
+    <div id="html3" class="page" data-page="— 11 —">
+      <div class="chapter-header html">
+        <div class="chapter-num html">Үчүнчү сабак · HTML</div>
+        <h1 class="chapter-title">Формалар жана Таблицалар</h1>
+        <p class="chapter-intro">Формалар колдонуучудан маалымат чогултуунун негизги куралы. Таблицалар маалыматты катар-мамычада уюштурат.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> HTML Формасы</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="tg">&lt;form</span> <span class="at">action</span>=<span class="st">"/submit"</span> <span class="at">method</span>=<span class="st">"POST"</span><span class="tg">&gt;</span>
+
+  <span class="tg">&lt;label</span> <span class="at">for</span>=<span class="st">"at"</span><span class="tg">&gt;</span>Атыңыз:<span class="tg">&lt;/label&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="st">"text"</span> <span class="at">id</span>=<span class="st">"at"</span>
+         <span class="at">name</span>=<span class="st">"at"</span> <span class="at">required</span><span class="tg">&gt;</span>
+
+  <span class="tg">&lt;label</span> <span class="at">for</span>=<span class="st">"email"</span><span class="tg">&gt;</span>Email:<span class="tg">&lt;/label&gt;</span>
+  <span class="tg">&lt;input</span> <span class="at">type</span>=<span class="st">"email"</span> <span class="at">id</span>=<span class="st">"email"</span>
+         <span class="at">placeholder</span>=<span class="st">"siz@mail.com"</span><span class="tg">&gt;</span>
+
+  <span class="tg">&lt;select</span> <span class="at">name</span>=<span class="st">"shaar"</span><span class="tg">&gt;</span>
+    <span class="tg">&lt;option&gt;</span>Ош<span class="tg">&lt;/option&gt;</span>
+    <span class="tg">&lt;option&gt;</span>Бишкек<span class="tg">&lt;/option&gt;</span>
+  <span class="tg">&lt;/select&gt;</span>
+
+  <span class="tg">&lt;textarea</span> <span class="at">rows</span>=<span class="st">"4"</span><span class="tg">&gt;&lt;/textarea&gt;</span>
+
+  <span class="tg">&lt;button</span> <span class="at">type</span>=<span class="st">"submit"</span><span class="tg">&gt;</span>Жиберүү<span class="tg">&lt;/button&gt;</span>
+
+<span class="tg">&lt;/form&gt;</span></pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> HTML Таблицасы</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="tg">&lt;table&gt;</span>
+  <span class="tg">&lt;thead&gt;</span>
+    <span class="tg">&lt;tr&gt;</span>
+      <span class="tg">&lt;th&gt;</span>Аты<span class="tg">&lt;/th&gt;</span>
+      <span class="tg">&lt;th&gt;</span>Жашы<span class="tg">&lt;/th&gt;</span>
+      <span class="tg">&lt;th&gt;</span>Шаары<span class="tg">&lt;/th&gt;</span>
+    <span class="tg">&lt;/tr&gt;</span>
+  <span class="tg">&lt;/thead&gt;</span>
+  <span class="tg">&lt;tbody&gt;</span>
+    <span class="tg">&lt;tr&gt;</span>
+      <span class="tg">&lt;td&gt;</span>Айзат<span class="tg">&lt;/td&gt;</span>
+      <span class="tg">&lt;td&gt;</span>20<span class="tg">&lt;/td&gt;</span>
+      <span class="tg">&lt;td&gt;</span>Ош<span class="tg">&lt;/td&gt;</span>
+    <span class="tg">&lt;/tr&gt;</span>
+  <span class="tg">&lt;/tbody&gt;</span>
+<span class="tg">&lt;/table&gt;</span></pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Форманы POST ыкмасы менен жиберүү үчүн кайсы атрибут колдонулат?</p>
+        <div class="quiz-options" id="q-html3">
+          <div class="quiz-opt" onclick="answer(this,'html3',false)"><span class="quiz-key">A</span> action="POST"</div>
+          <div class="quiz-opt" onclick="answer(this,'html3',true)"><span class="quiz-key">B</span> method="POST"</div>
+          <div class="quiz-opt" onclick="answer(this,'html3',false)"><span class="quiz-key">C</span> type="post"</div>
+          <div class="quiz-opt" onclick="answer(this,'html3',false)"><span class="quiz-key">D</span> send="POST"</div>
+        </div>
+        <div class="quiz-result" id="r-html3"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ HTML 4 ══════════ -->
+    <div id="html4" class="page" data-page="— 15 —">
+      <div class="chapter-header html">
+        <div class="chapter-num html">Төртүнчү сабак · HTML</div>
+        <h1 class="chapter-title">Семантикалык HTML</h1>
+        <p class="chapter-intro">Семантикалык теглер мазмунунун маанисин билдирет. Алар SEO жана жеткиликтүүлүк үчүн маанилүү.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker html"></span> Семантикалык теглер</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag html">HTML</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="tg">&lt;body&gt;</span>
+
+  <span class="tg">&lt;header&gt;</span>     <span class="cm">&lt;!-- Баракчанын башы --&gt;</span>
+    <span class="tg">&lt;nav&gt;&lt;/nav&gt;</span>  <span class="cm">&lt;!-- Навигация --&gt;</span>
+  <span class="tg">&lt;/header&gt;</span>
+
+  <span class="tg">&lt;main&gt;</span>       <span class="cm">&lt;!-- Негизги мазмун --&gt;</span>
+    <span class="tg">&lt;article&gt;</span>   <span class="cm">&lt;!-- Өз алдынча мазмун --&gt;</span>
+      <span class="tg">&lt;section&gt;</span> <span class="cm">&lt;!-- Тематикалык бөлүм --&gt;</span>
+        <span class="tg">&lt;h2&gt;</span>Аталышы<span class="tg">&lt;/h2&gt;</span>
+      <span class="tg">&lt;/section&gt;</span>
+    <span class="tg">&lt;/article&gt;</span>
+    <span class="tg">&lt;aside&gt;&lt;/aside&gt;</span> <span class="cm">&lt;!-- Каптал --&gt;</span>
+  <span class="tg">&lt;/main&gt;</span>
+
+  <span class="tg">&lt;footer&gt;</span>     <span class="cm">&lt;!-- Баракчанын аяғы --&gt;</span>
+    <span class="tg">&lt;p&gt;</span>&amp;copy; 2026<span class="tg">&lt;/p&gt;</span>
+  <span class="tg">&lt;/footer&gt;</span>
+
+<span class="tg">&lt;/body&gt;</span></pre></div>
+        </div>
+
+        <table class="book-table">
+          <tr><th>Тег</th><th>Мааниси</th></tr>
+          <tr><td><span class="t-code">&lt;header&gt;</span></td><td>Баракча же секциянын башы</td></tr>
+          <tr><td><span class="t-code">&lt;nav&gt;</span></td><td>Навигация шилтемелери</td></tr>
+          <tr><td><span class="t-code">&lt;main&gt;</span></td><td>Негизги уникалдуу мазмун</td></tr>
+          <tr><td><span class="t-code">&lt;article&gt;</span></td><td>Өз алдынча мазмун (макала)</td></tr>
+          <tr><td><span class="t-code">&lt;section&gt;</span></td><td>Тематикалык бөлүм</td></tr>
+          <tr><td><span class="t-code">&lt;aside&gt;</span></td><td>Каптал мазмун</td></tr>
+          <tr><td><span class="t-code">&lt;footer&gt;</span></td><td>Баракчанын аяғы</td></tr>
+        </table>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Навигация менюсу үчүн кайсы семантикалык тег туура?</p>
+        <div class="quiz-options" id="q-html4">
+          <div class="quiz-opt" onclick="answer(this,'html4',false)"><span class="quiz-key">A</span> &lt;menu&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html4',false)"><span class="quiz-key">B</span> &lt;div class="nav"&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html4',true)"><span class="quiz-key">C</span> &lt;nav&gt;</div>
+          <div class="quiz-opt" onclick="answer(this,'html4',false)"><span class="quiz-key">D</span> &lt;header&gt;</div>
+        </div>
+        <div class="quiz-result" id="r-html4"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ CSS 1 ══════════ -->
+    <div id="css1" class="page" data-page="— 19 —">
+      <div class="chapter-header css">
+        <div class="chapter-num css">Бешинчи сабак · CSS</div>
+        <h1 class="chapter-title">CSS Негиздери</h1>
+        <p class="chapter-intro">CSS (Cascading Style Sheets) — HTML элементтерине стиль берет. Түс, шрифт, өлчөм, жайгаштыруу — баардыгы CSS аркылуу.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> CSS кантип иштейт?</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">/* Синтаксис: сайлагыч { касиет: маани; } */</span>
+
+<span class="pr">h1</span> {
+  <span class="at">color</span>: <span class="vl">#2c1a0a</span>;
+  <span class="at">font-size</span>: <span class="vl">32px</span>;
+  <span class="at">text-align</span>: <span class="vl">center</span>;
+  <span class="at">margin-bottom</span>: <span class="vl">20px</span>;
+}
+
+<span class="pr">p</span> {
+  <span class="at">color</span>: <span class="vl">#555</span>;
+  <span class="at">font-size</span>: <span class="vl">16px</span>;
+  <span class="at">line-height</span>: <span class="vl">1.7</span>;
+}
+
+<span class="pr">body</span> {
+  <span class="at">background-color</span>: <span class="vl">#f5ede0</span>;
+  <span class="at">font-family</span>: <span class="st">'Georgia'</span>, serif;
+  <span class="at">margin</span>: <span class="vl">0</span>;
+}</pre></div>
+        </div>
+
+        <div class="note tip">
+          <strong>💡 Куту моделі (Box Model)</strong>
+          CSS'те ар бир элемент — бул куту. Анын ичинде контент, padding (ички бошлук), border (чек ара) жана margin (тышкы бошлук) бар.
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="pr">.кутуча</span> {
+  <span class="at">padding</span>: <span class="vl">20px</span>;          <span class="cm">/* Ички бошлук */</span>
+  <span class="at">border</span>: <span class="vl">2px solid #333</span>; <span class="cm">/* Чек ара */</span>
+  <span class="at">border-radius</span>: <span class="vl">8px</span>;     <span class="cm">/* Тегерек бурч */</span>
+  <span class="at">margin</span>: <span class="vl">16px auto</span>;      <span class="cm">/* Тышкы + борборго */</span>
+  <span class="at">width</span>: <span class="vl">300px</span>;
+  <span class="at">box-sizing</span>: <span class="vl">border-box</span>; <span class="cm">/* Padding өлчөмгө кирсин */</span>
+  <span class="at">background</span>: <span class="vl">linear-gradient(135deg, #8B4513, #5C2E00)</span>;
+  <span class="at">color</span>: <span class="vl">white</span>;
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Элементти горизонталдык борборго жайгаштыруу үчүн кандай margin маани колдонобуз?</p>
+        <div class="quiz-options" id="q-css1">
+          <div class="quiz-opt" onclick="answer(this,'css1',false)"><span class="quiz-key">A</span> margin: center</div>
+          <div class="quiz-opt" onclick="answer(this,'css1',true)"><span class="quiz-key">B</span> margin: 0 auto</div>
+          <div class="quiz-opt" onclick="answer(this,'css1',false)"><span class="quiz-key">C</span> margin: middle</div>
+          <div class="quiz-opt" onclick="answer(this,'css1',false)"><span class="quiz-key">D</span> padding: auto</div>
+        </div>
+        <div class="quiz-result" id="r-css1"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ CSS 2 ══════════ -->
+    <div id="css2" class="page" data-page="— 23 —">
+      <div class="chapter-header css">
+        <div class="chapter-num css">Алтынчы сабак · CSS</div>
+        <h1 class="chapter-title">Сайлагычтар жана Касиеттер</h1>
+        <p class="chapter-intro">CSS сайлагычтары кайсы HTML элементтерге стиль берерибизди аныктайт.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> Сайлагычтардын түрлөрү</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">/* 1. Элемент */</span>
+<span class="pr">p</span> { <span class="at">color</span>: <span class="vl">gray</span>; }
+
+<span class="cm">/* 2. Класс (.класс) */</span>
+<span class="pr">.баскыч</span> { <span class="at">background</span>: <span class="vl">#6b3aa8</span>; <span class="at">color</span>: <span class="vl">white</span>; }
+
+<span class="cm">/* 3. ID (#id) */</span>
+<span class="pr">#башкы</span> { <span class="at">font-size</span>: <span class="vl">24px</span>; }
+
+<span class="cm">/* 4. Псевдо-класс */</span>
+<span class="pr">a:hover</span>        { <span class="at">color</span>: <span class="vl">red</span>; }
+<span class="pr">li:first-child</span> { <span class="at">font-weight</span>: <span class="vl">bold</span>; }
+<span class="pr">input:focus</span>    { <span class="at">border-color</span>: <span class="vl">#6b3aa8</span>; }
+
+<span class="cm">/* 5. Псевдо-элемент */</span>
+<span class="pr">p::first-line</span> { <span class="at">font-weight</span>: <span class="vl">bold</span>; }
+<span class="pr">.карта::before</span> {
+  <span class="at">content</span>: <span class="st">"★ "</span>;
+  <span class="at">color</span>: <span class="vl">gold</span>;
+}
+
+<span class="cm">/* 6. Шрифт касиеттери */</span>
+<span class="pr">body</span> {
+  <span class="at">font-family</span>: <span class="st">'Georgia'</span>, serif;
+  <span class="at">font-weight</span>: <span class="vl">400</span>;
+  <span class="at">line-height</span>: <span class="vl">1.7</span>;
+  <span class="at">letter-spacing</span>: <span class="vl">0.3px</span>;
+  <span class="at">text-transform</span>: <span class="vl">none</span>;
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">CSS'те класска таандык элементтерди тандоочу сайлагыч кандай жазылат?</p>
+        <div class="quiz-options" id="q-css2">
+          <div class="quiz-opt" onclick="answer(this,'css2',false)"><span class="quiz-key">A</span> #класс-аты { }</div>
+          <div class="quiz-opt" onclick="answer(this,'css2',true)"><span class="quiz-key">B</span> .класс-аты { }</div>
+          <div class="quiz-opt" onclick="answer(this,'css2',false)"><span class="quiz-key">C</span> *класс-аты { }</div>
+          <div class="quiz-opt" onclick="answer(this,'css2',false)"><span class="quiz-key">D</span> @класс-аты { }</div>
+        </div>
+        <div class="quiz-result" id="r-css2"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ CSS 3 ══════════ -->
+    <div id="css3" class="page" data-page="— 27 —">
+      <div class="chapter-header css">
+        <div class="chapter-num css">Жетинчи сабак · CSS</div>
+        <h1 class="chapter-title">Flexbox жана Grid</h1>
+        <p class="chapter-intro">Flexbox жана Grid — заманбап CSS жайгаштыруу системалары. Алар менен татаал макеттерди оңой жасоого болот.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> Flexbox</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="pr">.контейнер</span> {
+  <span class="at">display</span>: <span class="vl">flex</span>;
+  <span class="at">flex-direction</span>: <span class="vl">row</span>;           <span class="cm">/* row | column */</span>
+  <span class="at">justify-content</span>: <span class="vl">space-between</span>; <span class="cm">/* Горизонталдык */</span>
+  <span class="at">align-items</span>: <span class="vl">center</span>;            <span class="cm">/* Вертикалдык */</span>
+  <span class="at">flex-wrap</span>: <span class="vl">wrap</span>;
+  <span class="at">gap</span>: <span class="vl">16px</span>;
+}
+
+<span class="pr">.бала</span> { <span class="at">flex</span>: <span class="vl">1</span>; } <span class="cm">/* Бош орунду тең бөлүш */</span></pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> CSS Grid</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="pr">.тор</span> {
+  <span class="at">display</span>: <span class="vl">grid</span>;
+  <span class="at">grid-template-columns</span>: <span class="vl">repeat(3, 1fr)</span>;
+  <span class="at">gap</span>: <span class="vl">20px</span>;
+}
+
+<span class="cm">/* Адаптивдүү тор */</span>
+<span class="pr">.адаптив</span> {
+  <span class="at">display</span>: <span class="vl">grid</span>;
+  <span class="at">grid-template-columns</span>:
+    <span class="vl">repeat(auto-fit, minmax(200px, 1fr))</span>;
+  <span class="at">gap</span>: <span class="vl">16px</span>;
+}
+
+<span class="cm">/* Элемент бир нече мамычаны ал */</span>
+<span class="pr">.кең</span> { <span class="at">grid-column</span>: <span class="vl">1 / -1</span>; }</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Flexbox'та элементтерди горизонталдык борборго жайгаштыруу үчүн кайсы касиет колдонулат?</p>
+        <div class="quiz-options" id="q-css3">
+          <div class="quiz-opt" onclick="answer(this,'css3',false)"><span class="quiz-key">A</span> align-items: center</div>
+          <div class="quiz-opt" onclick="answer(this,'css3',true)"><span class="quiz-key">B</span> justify-content: center</div>
+          <div class="quiz-opt" onclick="answer(this,'css3',false)"><span class="quiz-key">C</span> text-align: center</div>
+          <div class="quiz-opt" onclick="answer(this,'css3',false)"><span class="quiz-key">D</span> margin: center</div>
+        </div>
+        <div class="quiz-result" id="r-css3"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ CSS 4 ══════════ -->
+    <div id="css4" class="page" data-page="— 31 —">
+      <div class="chapter-header css">
+        <div class="chapter-num css">Сегизинчи сабак · CSS</div>
+        <h1 class="chapter-title">Анимациялар &amp; Media Query</h1>
+        <p class="chapter-intro">CSS анимациялары веб-баракчаны жандуу кылат. Media queries жооп берүүчү дизайн үчүн зарыл.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> Анимациялар</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">/* Transition — жайлап өтүш */</span>
+<span class="pr">.баскыч</span> {
+  <span class="at">background</span>: <span class="vl">#6b3aa8</span>;
+  <span class="at">transition</span>: <span class="vl">all 0.3s ease</span>;
+}
+<span class="pr">.баскыч:hover</span> {
+  <span class="at">background</span>: <span class="vl">#4a2080</span>;
+  <span class="at">transform</span>: <span class="vl">translateY(-3px)</span>;
+  <span class="at">box-shadow</span>: <span class="vl">0 8px 24px rgba(0,0,0,0.2)</span>;
+}
+
+<span class="cm">/* @keyframes анимация */</span>
+<span class="kw">@keyframes</span> <span class="fn">жарк-эт</span> {
+  <span class="nm">0%</span>   { <span class="at">opacity</span>: <span class="vl">0</span>; <span class="at">transform</span>: <span class="vl">translateY(20px)</span>; }
+  <span class="nm">100%</span> { <span class="at">opacity</span>: <span class="vl">1</span>; <span class="at">transform</span>: <span class="vl">translateY(0)</span>; }
+}
+
+<span class="pr">.пайда-болуу</span> {
+  <span class="at">animation</span>: <span class="vl">жарк-эт 0.5s ease forwards</span>;
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker css"></span> Media Queries</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag css">CSS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">/* Desktop (чоң экран) */</span>
+<span class="pr">.тор</span> { <span class="at">grid-template-columns</span>: <span class="vl">repeat(3, 1fr)</span>; }
+
+<span class="cm">/* Планшет */</span>
+<span class="kw">@media</span> (<span class="at">max-width</span>: <span class="vl">768px</span>) {
+  <span class="pr">.тор</span> { <span class="at">grid-template-columns</span>: <span class="vl">repeat(2, 1fr)</span>; }
+}
+
+<span class="cm">/* Телефон */</span>
+<span class="kw">@media</span> (<span class="at">max-width</span>: <span class="vl">480px</span>) {
+  <span class="pr">.тор</span> { <span class="at">grid-template-columns</span>: <span class="vl">1fr</span>; }
+  <span class="pr">h1</span>   { <span class="at">font-size</span>: <span class="vl">24px</span>; }
+}</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">CSS'те transition касиети эмне үчүн колдонулат?</p>
+        <div class="quiz-options" id="q-css4">
+          <div class="quiz-opt" onclick="answer(this,'css4',false)"><span class="quiz-key">A</span> Элементти жылдыруу үчүн</div>
+          <div class="quiz-opt" onclick="answer(this,'css4',true)"><span class="quiz-key">B</span> Стиль өзгөрүүсүн жайлатуу үчүн</div>
+          <div class="quiz-opt" onclick="answer(this,'css4',false)"><span class="quiz-key">C</span> Жаңы файл кошуу үчүн</div>
+          <div class="quiz-opt" onclick="answer(this,'css4',false)"><span class="quiz-key">D</span> Элементти жашыруу үчүн</div>
+        </div>
+        <div class="quiz-result" id="r-css4"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ JS 1 ══════════ -->
+    <div id="js1" class="page" data-page="— 35 —">
+      <div class="chapter-header js">
+        <div class="chapter-num js">Тогузунчу сабак · JavaScript</div>
+        <h1 class="chapter-title">JavaScript Негиздери</h1>
+        <p class="chapter-intro">JavaScript — веб-баракчаны интерактивдүү кылган программалоо тили. Логика, эсептөөлөр, маалымат иштетүү.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Өзгөрмөлөр жана маалымат түрлөрү</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">// let — өзгөртүүгө болот</span>
+<span class="kw">let</span> жашы = <span class="nm">20</span>;
+<span class="kw">let</span> аты = <span class="st">"Айзат"</span>;
+
+<span class="cm">// const — өзгөртүүгө болбойт</span>
+<span class="kw">const</span> ПИ = <span class="nm">3.14159</span>;
+<span class="kw">const</span> МАКСИМАЛДУУ = <span class="nm">100</span>;
+
+<span class="cm">// Маалымат түрлөрү</span>
+<span class="kw">let</span> сан     = <span class="nm">42</span>;       <span class="cm">// Number</span>
+<span class="kw">let</span> текст   = <span class="st">"Салам"</span>; <span class="cm">// String</span>
+<span class="kw">let</span> чын     = <span class="kw">true</span>;    <span class="cm">// Boolean</span>
+<span class="kw">let</span> бош     = <span class="kw">null</span>;    <span class="cm">// Null</span>
+
+<span class="cm">// Шарттар</span>
+<span class="kw">let</span> упай = <span class="nm">75</span>;
+<span class="kw">if</span> (упай >= <span class="nm">90</span>) {
+  console.<span class="fn">log</span>(<span class="st">"А — Мыкты!"</span>);
+} <span class="kw">else if</span> (упай >= <span class="nm">70</span>) {
+  console.<span class="fn">log</span>(<span class="st">"Б — Жакшы"</span>);
+} <span class="kw">else</span> {
+  console.<span class="fn">log</span>(<span class="st">"Аракет кылыңыз"</span>);
+}
+
+<span class="cm">// Тернар оператор</span>
+<span class="kw">let</span> статус = упай >= <span class="nm">50</span> ? <span class="st">"Өттү"</span> : <span class="st">"Өтпөдү"</span>;</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">JavaScript'те өзгөрбөй турган өзгөрмөнү кандай жарыялайбыз?</p>
+        <div class="quiz-options" id="q-js1">
+          <div class="quiz-opt" onclick="answer(this,'js1',false)"><span class="quiz-key">A</span> var</div>
+          <div class="quiz-opt" onclick="answer(this,'js1',false)"><span class="quiz-key">B</span> let</div>
+          <div class="quiz-opt" onclick="answer(this,'js1',true)"><span class="quiz-key">C</span> const</div>
+          <div class="quiz-opt" onclick="answer(this,'js1',false)"><span class="quiz-key">D</span> fixed</div>
+        </div>
+        <div class="quiz-result" id="r-js1"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ JS 2 ══════════ -->
+    <div id="js2" class="page" data-page="— 39 —">
+      <div class="chapter-header js">
+        <div class="chapter-num js">Онунчу сабак · JavaScript</div>
+        <h1 class="chapter-title">Функциялар жана Массивдер</h1>
+        <p class="chapter-intro">Функциялар — коддун кайра колдонула турган блоктору. Массивдер — маалыматтардын тизмеси.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Функциялар</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">// Классикалык функция</span>
+<span class="kw">function</span> <span class="fn">салам</span>(ат) {
+  <span class="kw">return</span> <span class="st">`Салам, ${ат}!`</span>;
+}
+
+<span class="cm">// Жебе функциясы</span>
+<span class="kw">const</span> <span class="fn">квадрат</span> = (сан) => сан * сан;
+
+<span class="cm">// Демейки параметр</span>
+<span class="kw">function</span> <span class="fn">кош</span>(ат = <span class="st">"мейман"</span>) {
+  <span class="kw">return</span> <span class="st">`Кош келдиңиз, ${ат}!`</span>;
+}
+
+<span class="cm">// Рекурсия</span>
+<span class="kw">function</span> <span class="fn">факториал</span>(н) {
+  <span class="kw">if</span> (н <= <span class="nm">1</span>) <span class="kw">return</span> <span class="nm">1</span>;
+  <span class="kw">return</span> н * <span class="fn">факториал</span>(н - <span class="nm">1</span>);
+}
+<span class="fn">факториал</span>(<span class="nm">5</span>); <span class="cm">// → 120</span></pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Массивдер</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="kw">const</span> шаарлар = [<span class="st">"Ош"</span>, <span class="st">"Бишкек"</span>, <span class="st">"Жалал-Абад"</span>];
+
+шаарлар.<span class="fn">push</span>(<span class="st">"Каракол"</span>);     <span class="cm">// Кошот (аяк)</span>
+шаарлар.<span class="fn">pop</span>();                <span class="cm">// Акыркысын алат</span>
+шаарлар.<span class="fn">includes</span>(<span class="st">"Ош"</span>);      <span class="cm">// true</span>
+
+<span class="cm">// Маанилүү методдор</span>
+<span class="kw">const</span> узун = шаарлар.<span class="fn">filter</span>(ш => ш.<span class="at">length</span> > <span class="nm">4</span>);
+<span class="kw">const</span> чоңжазуу = шаарлар.<span class="fn">map</span>(ш => ш.<span class="fn">toUpperCase</span>());
+шаарлар.<span class="fn">forEach</span>(ш => console.<span class="fn">log</span>(ш));
+<span class="kw">const</span> иреттелген = шаарлар.<span class="fn">sort</span>();
+
+<span class="cm">// Destructuring</span>
+<span class="kw">const</span> [биринчи, экинчи] = шаарлар;
+<span class="kw">const</span> жаңы = [...шаарлар, <span class="st">"Нарын"</span>];</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">Массивдин аягына жаңы элемент кошуу үчүн кайсы метод колдонулат?</p>
+        <div class="quiz-options" id="q-js2">
+          <div class="quiz-opt" onclick="answer(this,'js2',false)"><span class="quiz-key">A</span> .unshift()</div>
+          <div class="quiz-opt" onclick="answer(this,'js2',true)"><span class="quiz-key">B</span> .push()</div>
+          <div class="quiz-opt" onclick="answer(this,'js2',false)"><span class="quiz-key">C</span> .add()</div>
+          <div class="quiz-opt" onclick="answer(this,'js2',false)"><span class="quiz-key">D</span> .append()</div>
+        </div>
+        <div class="quiz-result" id="r-js2"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ JS 3 ══════════ -->
+    <div id="js3" class="page" data-page="— 43 —">
+      <div class="chapter-header js">
+        <div class="chapter-num js">Он биринчи сабак · JavaScript</div>
+        <h1 class="chapter-title">DOM менен иштөө</h1>
+        <p class="chapter-intro">DOM (Document Object Model) — JavaScript'ке HTML элементтерин динамикалык түрдө өзгөртүүгө мүмкүндүк берет.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Элементтерди табуу жана өзгөртүү</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="cm">// Табуу</span>
+<span class="kw">const</span> баш = document.<span class="fn">getElementById</span>(<span class="st">"аталыш"</span>);
+<span class="kw">const</span> бир = document.<span class="fn">querySelector</span>(<span class="st">".баскыч"</span>);
+<span class="kw">const</span> баары = document.<span class="fn">querySelectorAll</span>(<span class="st">"li"</span>);
+
+<span class="cm">// Мазмун өзгөртүү</span>
+бир.textContent = <span class="st">"Жаңы текст"</span>;
+бир.innerHTML = <span class="st">"&lt;b&gt;Жоон&lt;/b&gt; текст"</span>;
+
+<span class="cm">// Стиль өзгөртүү</span>
+бир.style.color = <span class="st">"blue"</span>;
+бир.style.display = <span class="st">"none"</span>;
+
+<span class="cm">// Класс кошуу/алуу</span>
+бир.classList.<span class="fn">add</span>(<span class="st">"активдүү"</span>);
+бир.classList.<span class="fn">remove</span>(<span class="st">"жашырылган"</span>);
+бир.classList.<span class="fn">toggle</span>(<span class="st">"ачык"</span>);
+
+<span class="cm">// Жаңы элемент жаратуу</span>
+<span class="kw">const</span> жаңы = document.<span class="fn">createElement</span>(<span class="st">"p"</span>);
+жаңы.textContent = <span class="st">"Жаңы параграф"</span>;
+document.body.<span class="fn">appendChild</span>(жаңы);
+
+<span class="cm">// Жок кылуу</span>
+бир.<span class="fn">remove</span>();</pre></div>
+        </div>
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Суроо</div>
+        <p class="quiz-q">CSS класс кошуу менен алуунун ортосунда которулуу үчүн кайсы метод колдонулат?</p>
+        <div class="quiz-options" id="q-js3">
+          <div class="quiz-opt" onclick="answer(this,'js3',false)"><span class="quiz-key">A</span> classList.switch()</div>
+          <div class="quiz-opt" onclick="answer(this,'js3',false)"><span class="quiz-key">B</span> classList.change()</div>
+          <div class="quiz-opt" onclick="answer(this,'js3',true)"><span class="quiz-key">C</span> classList.toggle()</div>
+          <div class="quiz-opt" onclick="answer(this,'js3',false)"><span class="quiz-key">D</span> classList.flip()</div>
+        </div>
+        <div class="quiz-result" id="r-js3"></div>
+      </div>
+      <div class="ch-divider">❧</div>
+    </div>
+
+    <!-- ══════════ JS 4 ══════════ -->
+    <div id="js4" class="page" data-page="— 47 —">
+      <div class="chapter-header js">
+        <div class="chapter-num js">Он экинчи сабак · JavaScript</div>
+        <h1 class="chapter-title">Окуялар жана Fetch API</h1>
+        <p class="chapter-intro">Окуялар колдонуучунун аракеттерине жооп берет. Fetch API серверден маалымат алуу үчүн колдонулат.</p>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Окуялар (Events)</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="kw">const</span> баскыч = document.<span class="fn">querySelector</span>(<span class="st">"#баскыч"</span>);
+
+<span class="cm">// Click окуясы</span>
+баскыч.<span class="fn">addEventListener</span>(<span class="st">"click"</span>, (е) => {
+  console.<span class="fn">log</span>(<span class="st">"Бастыңыз!"</span>, е.target);
+});
+
+<span class="cm">// Окуялардын түрлөрү</span>
+элемент.<span class="fn">addEventListener</span>(<span class="st">"mouseover"</span>, ...);
+элемент.<span class="fn">addEventListener</span>(<span class="st">"keydown"</span>, ...);
+элемент.<span class="fn">addEventListener</span>(<span class="st">"input"</span>, ...);
+форма.<span class="fn">addEventListener</span>(<span class="st">"submit"</span>, (е) => {
+  е.<span class="fn">preventDefault</span>(); <span class="cm">// Демейки аракетти токтот</span>
+});
+window.<span class="fn">addEventListener</span>(<span class="st">"scroll"</span>, ...);
+window.<span class="fn">addEventListener</span>(<span class="st">"resize"</span>, ...);</pre></div>
+        </div>
+      </div>
+
+      <div class="lesson">
+        <h3><span class="marker js"></span> Fetch API + async/await</h3>
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dots"><div class="code-dot"></div><div class="code-dot"></div><div class="code-dot"></div></div>
+            <span class="code-lang-tag js">JS</span>
+            <button class="copy-btn" onclick="copyCode(this)">COPY</button>
+          </div>
+          <div class="code-body"><pre><span class="kw">async function</span> <span class="fn">маалыматАлуу</span>() {
+  <span class="kw">try</span> {
+    <span class="kw">const</span> жооп = <span class="kw">await</span> <span class="fn">fetch</span>(<span class="st">"https://api.example.com/data"</span>);
+    <span class="kw">if</span> (!жооп.ok) <span class="kw">throw new</span> <span class="fn">Error</span>(<span class="st">"Ката!"</span>);
+    <span class="kw">const</span> маалымат = <span class="kw">await</span> жооп.<span class="fn">json</span>();
+    console.<span class="fn">log</span>(маалымат);
+  } <span class="kw">catch</span> (ката) {
+    console.<span class="fn">error</span>(<span class="st">"Ката:"</span>, ката);
+  }
+}
+
+<span class="cm">// LocalStorage</span>
+localStorage.<span class="fn">setItem</span>(<span class="st">"ат"</span>, <span class="st">"Айзат"</span>);
+<span class="kw">const</span> ат = localStorage.<span class="fn">getItem</span>(<span class="st">"ат"</span>);</pre></div>
+        </div>
+      </div>
+
+      <!-- PRACTICE -->
+      <div class="lesson">
+        <h3><span class="marker js"></span> Жандуу практика — Эсептегич</h3>
+        <div class="practice-box">
+          <div class="practice-head">
+            <span>⚡ ПРАКТИКА — Кодду өзгөртүп, Иштет баскычын басыңыз</span>
+            <button class="run-btn" onclick="runCode()">▶ ИШТЕТ</button>
+          </div>
+          <div class="practice-editor">
+            <textarea id="practiceCode" spellcheck="false">&lt;div style="font-family:Georgia,serif;padding:28px;text-align:center;background:#f5ede0;"&gt;
+  &lt;h2 style="color:#2c1a0a;margin-bottom:16px;"&gt;🔢 Эсептегич&lt;/h2&gt;
+  &lt;div id="сан" style="font-size:64px;font-weight:900;color:#8B4513;margin:16px 0;"&gt;0&lt;/div&gt;
+  &lt;button onclick="өзгөрт(-1)" style="padding:12px 28px;font-size:20px;margin:4px;cursor:pointer;background:#3D1C00;color:#f5deb3;border:none;border-radius:4px;"&gt;−&lt;/button&gt;
+  &lt;button onclick="баштапкы()" style="padding:12px 20px;font-size:14px;margin:4px;cursor:pointer;background:#a07040;color:white;border:none;border-radius:4px;"&gt;Баштапкы&lt;/button&gt;
+  &lt;button onclick="өзгөрт(1)"  style="padding:12px 28px;font-size:20px;margin:4px;cursor:pointer;background:#8B4513;color:#f5deb3;border:none;border-radius:4px;"&gt;+&lt;/button&gt;
+&lt;/div&gt;
+&lt;script&gt;
+  let эсеп = 0;
+  function өзгөрт(сан) {
+    эсеп += сан;
+    document.getElementById('сан').textContent = эсеп;
+  }
+  function баштапкы() {
+    эсеп = 0;
+    document.getElementById('сан').textContent = 0;
+  }
+&lt;/script&gt;</textarea>
+          </div>
+          <div class="practice-output" id="practiceOutput">
+            <iframe id="practiceFrame"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="note tip">
+        <strong>🎉 Куттуктаймын!</strong>
+        Сиз бүткүл курсту ийгиликтүү аяктадыңыз! HTML, CSS жана JavaScript негиздерин үйрөндүңүз. Азыр өз веб-сайтыңызды жасоого даярсыз.
+      </div>
+
+      <div class="quiz-box">
+        <div class="quiz-title">📝 Акыркы суроо</div>
+        <p class="quiz-q">JavaScript'те серверден маалымат алуунун заманбап ыкмасы кайсы?</p>
+        <div class="quiz-options" id="q-js4">
+          <div class="quiz-opt" onclick="answer(this,'js4',false)"><span class="quiz-key">A</span> XMLHttpRequest</div>
+          <div class="quiz-opt" onclick="answer(this,'js4',false)"><span class="quiz-key">B</span> getJSON()</div>
+          <div class="quiz-opt" onclick="answer(this,'js4',true)"><span class="quiz-key">C</span> fetch() + async/await</div>
+          <div class="quiz-opt" onclick="answer(this,'js4',false)"><span class="quiz-key">D</span> loadData()</div>
+        </div>
+        <div class="quiz-result" id="r-js4"></div>
+      </div>
+
+      <div class="ch-divider">— Аяк —</div>
+    </div>
+
+    <!-- PAGE NAVIGATION -->
+    <div class="page-nav" id="pageNav" style="display:none">
+      <button class="nav-btn" id="prevBtn" onclick="navigatePage(-1)" disabled>← Артка</button>
+      <span class="page-indicator" id="pageIndicator">1 / 13</span>
+      <button class="nav-btn" id="nextBtn" onclick="navigatePage(1)">Алга →</button>
+    </div>
+  </main>
+</div>
+
+<script>
+/* ════ PARTICLES ════ */
+(function() {
+  const wrap = document.getElementById('particles');
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.cssText = `
+      left: ${Math.random()*100}%;
+      animation-duration: ${4 + Math.random()*6}s;
+      animation-delay: ${Math.random()*6}s;
+      width: ${1 + Math.random()*2}px;
+      height: ${1 + Math.random()*2}px;
+    `;
+    wrap.appendChild(p);
+  }
+})();
+
+/* ════ BOOK OPEN ════ */
+function openBook() {
+  const btn = document.getElementById('openBookBtn');
+  const book = document.getElementById('book3d');
+  btn.textContent = '✨ Ачылууда...';
+  btn.disabled = true;
+
+  // Animate book flying open
+  book.style.transition = 'transform 1s cubic-bezier(0.25,0.46,0.45,0.94)';
+  book.style.transform = 'rotateY(-180deg) rotateX(10deg) scale(1.1)';
+
+  setTimeout(() => {
+    document.getElementById('cover-screen').classList.add('hidden');
+    document.getElementById('book-app').classList.add('visible');
+    document.getElementById('pageNav').style.display = 'flex';
+  }, 900);
+}
+
+/* ════ PAGE SYSTEM ════ */
+const pages = ['home','html1','html2','html3','html4','css1','css2','css3','css4','js1','js2','js3','js4'];
+let currentIdx = 0;
+
+function showPage(id, navEl) {
+  // Hide all
+  document.querySelectorAll('.page, .home-title-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.toc-item').forEach(n => n.classList.remove('active'));
+
+  const sec = document.getElementById(id);
+  if (sec) sec.classList.add('active');
+  if (navEl) {
+    navEl.classList.add('active');
+    navEl.scrollIntoView({ block: 'nearest' });
+  }
+
+  currentIdx = pages.indexOf(id);
+  updateNavButtons();
+  closeSidebar();
+  window.scrollTo(0,0);
+}
+
+function navigatePage(dir) {
+  const newIdx = currentIdx + dir;
+  if (newIdx < 0 || newIdx >= pages.length) return;
+  const id = pages[newIdx];
+  const navEl = document.querySelector(`.toc-item[onclick*="${id}"]`);
+  showPage(id, navEl);
+}
+
+function updateNavButtons() {
+  document.getElementById('prevBtn').disabled = currentIdx <= 0;
+  document.getElementById('nextBtn').disabled = currentIdx >= pages.length - 1;
+  document.getElementById('pageIndicator').textContent = `${currentIdx + 1} / ${pages.length}`;
+}
+
+/* ════ QUIZ ════ */
+const quiz = {};
+function answer(el, id, correct) {
+  if (quiz[id]) return;
+  quiz[id] = correct;
+  const opts = document.querySelectorAll(`#q-${id} .quiz-opt`);
+  opts.forEach(o => o.style.pointerEvents = 'none');
+  const res = document.getElementById(`r-${id}`);
+  if (correct) {
+    el.classList.add('correct');
+    res.textContent = '✅ Туура! Мыкты жооп.';
+    res.className = 'quiz-result show ok';
+  } else {
+    el.classList.add('wrong');
+    opts.forEach(o => { if (o.onclick.toString().includes('true')) o.classList.add('correct'); });
+    res.textContent = '❌ Туура эмес. Жашыл жооп — туурасы.';
+    res.className = 'quiz-result show err';
+  }
+  updateProgress();
+}
+
+function updateProgress() {
+  const hd = ['html1','html2','html3','html4'].filter(k=>quiz[k]===true).length;
+  const cd = ['css1','css2','css3','css4'].filter(k=>quiz[k]===true).length;
+  const jd = ['js1','js2','js3','js4'].filter(k=>quiz[k]===true).length;
+  setP('h', hd, 4); setP('c', cd, 4); setP('j', jd, 4);
+}
+function setP(t, d, total) {
+  const pct = Math.round(d/total*100);
+  document.getElementById('p'+t).style.width = pct+'%';
+  document.getElementById('pp'+t).textContent = pct+'%';
+}
+
+/* ════ COPY ════ */
+function copyCode(btn) {
+  const pre = btn.closest('.code-block').querySelector('pre');
+  navigator.clipboard.writeText(pre.innerText).then(() => {
+    btn.textContent = 'COPIED!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = 'COPY'; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+/* ════ PRACTICE ════ */
+function runCode() {
+  const code = document.getElementById('practiceCode').value;
+  const out = document.getElementById('practiceOutput');
+  out.classList.add('show');
+  const frame = document.getElementById('practiceFrame');
+  frame.style.minHeight = '180px';
+  const doc = frame.contentDocument;
+  doc.open(); doc.write(code); doc.close();
+}
+
+/* ════ MOBILE SIDEBAR ════ */
+document.getElementById('mobToggle').addEventListener('click', () => {
+  document.getElementById('tocSidebar').classList.toggle('open');
+  document.getElementById('overlay').classList.toggle('show');
+});
+function closeSidebar() {
+  document.getElementById('tocSidebar').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');
+}
+document.getElementById('overlay').addEventListener('click', closeSidebar);
+
+/* Initial home activation */
+document.querySelector('.toc-item').classList.add('active');
+</script>
+</body>
+</html>
